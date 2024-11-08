@@ -1,7 +1,6 @@
 # User-specific stuff
 .idea/
 build/
-gradle/
 .gradle/
 
 *.iml
