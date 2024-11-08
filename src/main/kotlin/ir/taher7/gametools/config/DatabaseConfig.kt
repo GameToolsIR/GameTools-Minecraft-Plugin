@@ -1,22 +1,29 @@
-package ir.taher7.gametools.storage
+package ir.taher7.gametools.config
 
 import org.sayandev.stickynote.bukkit.plugin
 import org.sayandev.stickynote.bukkit.pluginDirectory
 import org.sayandev.stickynote.core.configuration.Config
+import org.spongepowered.configurate.objectmapping.ConfigSerializable
 import org.spongepowered.configurate.objectmapping.meta.Setting
 import java.io.File
 
+val databaseConfig: DatabaseStorage = DatabaseStorage.fromConfig() ?: DatabaseStorage.defaultConfig()
+
+@ConfigSerializable
 data class DatabaseStorage(
-    val method: DatabaseMethod = DatabaseMethod.MARIADB,
+    val method: DatabaseMethod = DatabaseMethod.H2,
     val host: String = "localhost",
     val port: Int = 3306,
     val username: String = "root",
     val password: String = "",
-//    val database: String = plugin.name.lowercase(),
-    val database: String = "melody",
+    val database: String = plugin.name.lowercase(),
     @Setting("use-ssl") val useSSL: Boolean = false,
     val poolSize: Int = 5
-) : Config(pluginDirectory, FILE_NAME) {
+): Config(pluginDirectory, FILE_NAME) {
+
+    init {
+        load()
+    }
 
     enum class DatabaseMethod {
         H2,
@@ -27,7 +34,6 @@ data class DatabaseStorage(
     companion object {
         private const val FILE_NAME = "storage.yml"
         private val storageConfigFile = File(pluginDirectory, FILE_NAME)
-        private var storageConfig = fromConfig() ?: defaultConfig()
 
         fun defaultConfig(): DatabaseStorage {
             return DatabaseStorage()
@@ -37,13 +43,9 @@ data class DatabaseStorage(
             return fromConfig<DatabaseStorage>(storageConfigFile)
         }
 
-        fun get(): DatabaseStorage {
-            return storageConfig
-        }
-
-        fun reload() {
-            storageConfig = fromConfig() ?: defaultConfig()
-        }
+//        fun reload() {
+//            databaseStorage = fromConfig() ?: defaultConfig()
+//        }
     }
 
 }

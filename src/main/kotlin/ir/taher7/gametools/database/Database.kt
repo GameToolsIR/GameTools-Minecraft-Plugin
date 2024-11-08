@@ -2,7 +2,8 @@ package ir.taher7.gametools.database
 
 import com.zaxxer.hikari.HikariConfig
 import com.zaxxer.hikari.HikariDataSource
-import ir.taher7.gametools.storage.DatabaseStorage
+import ir.taher7.gametools.config.DatabaseStorage
+import ir.taher7.gametools.config.databaseConfig
 import kotlinx.coroutines.Deferred
 import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.Database
@@ -19,28 +20,28 @@ import java.util.UUID
 object Database {
 
     private val databaseDispatcher = AsyncDispatcher(
-        "${plugin.name.lowercase()}-${DatabaseStorage.get().method}-thread",
-        DatabaseStorage.get().poolSize
+        "${plugin.name.lowercase()}-${databaseConfig.method}-thread",
+        databaseConfig.poolSize
     )
     private val database: Database
 
     init {
         val config = HikariConfig().apply {
-            jdbcUrl = when (DatabaseStorage.get().method) {
+            jdbcUrl = when (databaseConfig.method) {
                 DatabaseStorage.DatabaseMethod.H2 -> "jdbc:h2:file:${pluginDirectory.absolutePath}/storage"
                 DatabaseStorage.DatabaseMethod.MYSQL,
-                DatabaseStorage.DatabaseMethod.MARIADB -> "jdbc:${DatabaseStorage.get().method.name.lowercase()}:://${DatabaseStorage.get().host}:${DatabaseStorage.get().port}/${DatabaseStorage.get().database}"
+                DatabaseStorage.DatabaseMethod.MARIADB -> "jdbc:${databaseConfig.method.name.lowercase()}://${databaseConfig.host}:${databaseConfig.port}/${databaseConfig.database}"
             }
 
-            driverClassName = when (DatabaseStorage.get().method) {
+            driverClassName = when (databaseConfig.method) {
                 DatabaseStorage.DatabaseMethod.H2 -> "org.h2.Driver"
                 DatabaseStorage.DatabaseMethod.MYSQL -> "com.mysql.cj.jdbc.Driver"
                 DatabaseStorage.DatabaseMethod.MARIADB -> "org.mariadb.jdbc.Driver"
             }
 
-            username = DatabaseStorage.get().username
-            password = DatabaseStorage.get().password
-            maximumPoolSize = DatabaseStorage.get().poolSize
+            username = databaseConfig.username
+            password = databaseConfig.password
+            maximumPoolSize = databaseConfig.poolSize
         }
         database = Database.connect(HikariDataSource(config))
         TransactionManager.defaultDatabase = database

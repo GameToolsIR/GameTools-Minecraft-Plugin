@@ -16,10 +16,6 @@ class CommandManager : BukkitCommand(
     }
 
     init {
-        /*
-        /gametools vote
-        /gametools reload
-         */
         registerHelpLiteral()
         VoteCommand(rawCommandBuilder())
         ReloadCommand(rawCommandBuilder())
