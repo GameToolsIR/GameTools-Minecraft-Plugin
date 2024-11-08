@@ -46,15 +46,15 @@ val relocations = mapOf(
 
 tasks {
 
-    shadowJar {
-        exclude("META-INF/**")
-        archiveFileName.set("${project.name}-${version}.jar")
-        relocations.forEach { (from, to) ->
-            relocate(from, to)
-        }
-        from("LICENSE")
-        //minimize()
-    }
+//    shadowJar {
+//        exclude("META-INF/**")
+//        archiveFileName.set("${project.name}-${version}.jar")
+//        relocations.forEach { (from, to) ->
+//            relocate(from, to)
+//        }
+//        from("LICENSE")
+//        //minimize()
+//    }
 
     runServer {
         minecraftVersion("1.21.1")

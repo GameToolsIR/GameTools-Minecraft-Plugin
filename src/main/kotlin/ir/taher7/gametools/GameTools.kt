@@ -17,8 +17,6 @@ class GameTools : JavaPlugin() {
         DatabaseStorage.get()
         Database
         CommandManager()
-
-
     }
 
     override fun onDisable() {

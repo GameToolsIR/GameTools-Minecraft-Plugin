@@ -65,7 +65,7 @@ object Database {
         return async {
             Vote.Table
                 .selectAll()
-                .where { Vote.Table.uuid eq uniqueId }
+                .where { Vote.Table.uuid eq uniqueId.toString() }
                 .firstOrNull()
                 ?.let {
                     createVote(it)
@@ -83,7 +83,7 @@ object Database {
 
     suspend fun deleteVote(uniqueId: UUID): Deferred<Unit> {
         return async {
-            Vote.Table.deleteWhere { uuid eq uniqueId }
+            Vote.Table.deleteWhere { uuid eq uniqueId.toString() }
         }
     }
 
@@ -96,7 +96,7 @@ object Database {
     private fun createVote(row: ResultRow): Vote {
         log("Creating vote from row: $row")
         return Vote(
-            row[Vote.Table.id].value,
+            row[Vote.Table.id],
             row[Vote.Table.uuid],
             row[Vote.Table.username],
             row[Vote.Table.discordId],

@@ -10,6 +10,7 @@ import org.sayandev.stickynote.bukkit.command.BukkitSender
 import org.sayandev.stickynote.bukkit.command.player
 import org.sayandev.stickynote.bukkit.extension.sendComponent
 import org.sayandev.stickynote.bukkit.launch
+import org.sayandev.stickynote.bukkit.log
 
 class VoteCommand(
     command: MutableCommandBuilder<BukkitSender>
@@ -20,13 +21,13 @@ class VoteCommand(
 
             val isVoted = Database.getVote(player.uniqueId).await()
             if (isVoted != null) {
-                player.sendComponent("<red>You have already voted!")
+                log(isVoted.uuid)
+                player.sendComponent("<red>You have already voted! ${isVoted.uuid}")
                 return@launch
             }
 
             val newVote = Vote(
-                id = 0,
-                uuid = player.uniqueId,
+                uuid = player.uniqueId.toString(),
                 discordId = "",
                 username = player.name,
                 votedAt = Clock.System.now()
