@@ -23,14 +23,14 @@ data class MessageConfig(
 
     companion object {
         private const val FILE_NAME = "message.yml"
-        private val storageConfigFile = File(pluginDirectory, FILE_NAME)
+        private val messageConfigFile = File(pluginDirectory, FILE_NAME)
 
         fun defaultConfig(): MessageConfig {
             return MessageConfig()
         }
 
         fun fromConfig(): MessageConfig? {
-            return fromConfig<MessageConfig>(storageConfigFile)
+            return fromConfig<MessageConfig>(messageConfigFile)
         }
 
         fun reload() {

@@ -33,14 +33,14 @@ data class DatabaseStorage(
 
     companion object {
         private const val FILE_NAME = "storage.yml"
-        private val storageConfigFile = File(pluginDirectory, FILE_NAME)
+        private val databaseConfigFile = File(pluginDirectory, FILE_NAME)
 
         fun defaultConfig(): DatabaseStorage {
             return DatabaseStorage()
         }
 
         fun fromConfig(): DatabaseStorage? {
-            return fromConfig<DatabaseStorage>(storageConfigFile)
+            return fromConfig<DatabaseStorage>(databaseConfigFile)
         }
 
 //        fun reload() {

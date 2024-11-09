@@ -18,12 +18,10 @@ class ReloadCommand(
         settingConfig.reload()
         messageConfig.reload()
 
-
         context.sender().platformSender().sendComponent(
-            "<green>Reloading configuration...",
+            messageConfig.general.reload,
             Placeholder.parsed("player", context.sender().platformSender().name)
         )
 
     }
-
 }

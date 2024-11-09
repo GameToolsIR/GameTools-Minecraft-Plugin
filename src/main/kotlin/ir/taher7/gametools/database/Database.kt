@@ -11,11 +11,10 @@ import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 import org.jetbrains.exposed.sql.transactions.TransactionManager
 import org.jetbrains.exposed.sql.transactions.experimental.suspendedTransactionAsync
 import org.jetbrains.exposed.sql.transactions.transaction
-import org.sayandev.stickynote.bukkit.log
 import org.sayandev.stickynote.bukkit.plugin
 import org.sayandev.stickynote.bukkit.pluginDirectory
 import org.sayandev.stickynote.core.coroutine.dispatcher.AsyncDispatcher
-import java.util.UUID
+import java.util.*
 
 object Database {
 
@@ -62,7 +61,6 @@ object Database {
     }
 
     suspend fun getVote(uniqueId: UUID): Deferred<Vote?> {
-        log(uniqueId.toString())
         return async {
             Vote.Table
                 .selectAll()
@@ -95,7 +93,6 @@ object Database {
     }
 
     private fun createVote(row: ResultRow): Vote {
-        log("Creating vote from row: $row")
         return Vote(
             row[Vote.Table.id],
             row[Vote.Table.uuid],
