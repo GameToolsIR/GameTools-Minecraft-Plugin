@@ -1,7 +1,6 @@
 import org.sayandev.plugin.StickyNoteModules
 
 plugins {
-    `java-library`
     kotlin("jvm") version "2.0.20"
     id("xyz.jpenilla.run-paper") version "2.3.1"
     id("net.minecrell.plugin-yml.bukkit") version "0.6.0"
@@ -33,6 +32,7 @@ dependencies {
 
 
     implementation("io.socket:socket.io-client:2.1.1")
+    implementation("org.jetbrains.exposed:exposed-kotlin-datetime:0.56.0")
 }
 
 stickynote {
@@ -41,18 +41,20 @@ stickynote {
 
 val relocations = mapOf(
     "io.socket" to "ir.taher7.gametools.lib.socket",
+    "org.jetbrains.exposed" to "ir.taher7.gametools.lib.exposed"
 )
 
 tasks {
 
-    shadowJar {
-        exclude("META-INF/**")
-        archiveFileName.set("${project.name}-${version}.jar")
-        relocations.forEach { (from, to) ->
-            relocate(from, to)
-        }
-        from("LICENSE")
-    }
+//    shadowJar {
+//        exclude("META-INF/**")
+//        archiveFileName.set("${project.name}-${version}.jar")
+//        relocations.forEach { (from, to) ->
+//            relocate(from, to)
+//        }
+//        from("LICENSE")
+//        //minimize()
+//    }
 
     runServer {
         minecraftVersion("1.21.1")

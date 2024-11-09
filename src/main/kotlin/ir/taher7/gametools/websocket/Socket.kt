@@ -1,18 +1,12 @@
 package ir.taher7.gametools.websocket
 
-import com.google.gson.GsonBuilder
-import com.google.gson.internal.LinkedTreeMap
 import io.socket.client.IO
 import io.socket.client.Socket
 import ir.taher7.gametools.config.settingConfig
-import ir.taher7.gametools.utils.GsonUtils
-import ir.taher7.gametools.utils.GsonUtils.fromJsonOrNull
 import ir.taher7.gametools.websocket.events.ConnectEvent
 import ir.taher7.gametools.websocket.events.DisconnectEvent
 import ir.taher7.gametools.websocket.events.ErrorEvent
-import ir.taher7.gametools.websocket.events.VoteEvent
-import ir.taher7.gametools.websocket.models.Error
-import org.sayandev.stickynote.bukkit.log
+import ir.taher7.gametools.websocket.events.NewVoteEvent
 import java.net.URI
 
 object Socket {
@@ -23,8 +17,7 @@ object Socket {
         CONNECT(Socket.EVENT_CONNECT),
         ERROR(Socket.EVENT_CONNECT_ERROR),
         DISCONNECT(Socket.EVENT_DISCONNECT),
-        VOTE("vote"),
-
+        NEW_VOTE("newVote"),
     }
 
     private val url =
@@ -45,14 +38,14 @@ object Socket {
         socket.on(Event.CONNECT.value) { ConnectEvent(Event.CONNECT).handler(it) }
         socket.on(Event.ERROR.value) { ErrorEvent(Event.ERROR).handler(it) }
         socket.on(Event.DISCONNECT.value) { DisconnectEvent(Event.DISCONNECT).handler(it) }
-        socket.on(Event.VOTE.value) { VoteEvent(Event.VOTE).handler(it) }
+        socket.on(Event.NEW_VOTE.value) { NewVoteEvent(Event.NEW_VOTE).handler(it) }
 
     }
 
 
-    fun emit(event: String, vararg args: Any) {
+    fun emit(event: String, data: Map<String, String>) {
         if (!socket.isActive) return
-        socket.emit(event, args)
+        socket.emit(event, data)
     }
 
     fun close() {
