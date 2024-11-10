@@ -12,8 +12,6 @@ class ErrorEvent(event: Socket.Event) : SocketEvent(event) {
         val error = GsonUtils.gson.fromJsonOrNull(event[0].toString(), Error::class.java)
         if (error !== null) {
             log("Error: ${error.message}")
-        } else {
-            log("Error: ${event[0]}")
         }
     }
 }
