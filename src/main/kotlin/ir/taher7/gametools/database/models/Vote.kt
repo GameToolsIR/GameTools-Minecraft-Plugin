@@ -1,4 +1,4 @@
-package ir.taher7.gametools.database
+package ir.taher7.gametools.database.models
 
 import kotlinx.datetime.Clock
 import kotlinx.datetime.Instant
@@ -12,6 +12,7 @@ data class Vote(
     val uuid: String,
     val username: String,
     val discordId: String,
+    val isReceivedRewards: Boolean = false,
     val votedAt: Instant = Clock.System.now(),
 ) {
 
@@ -20,6 +21,7 @@ data class Vote(
         val uuid = varchar("uuid", 36).uniqueIndex()
         val username = varchar("username", 32)
         val discordId = varchar("discordId", 32).uniqueIndex()
+        val isReceivedRewards = bool("isReceivedRewards").default(false)
         val votedAt = timestamp("votedAt").defaultExpression(CurrentTimestamp)
 
         override val primaryKey = PrimaryKey(id)

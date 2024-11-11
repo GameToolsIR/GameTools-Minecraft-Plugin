@@ -4,6 +4,7 @@ import com.zaxxer.hikari.HikariConfig
 import com.zaxxer.hikari.HikariDataSource
 import ir.taher7.gametools.config.DatabaseStorage
 import ir.taher7.gametools.config.databaseConfig
+import ir.taher7.gametools.database.models.Vote
 import kotlinx.coroutines.Deferred
 import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.Database
@@ -98,8 +99,25 @@ object Database {
             row[Vote.Table.uuid],
             row[Vote.Table.username],
             row[Vote.Table.discordId],
+            row[Vote.Table.isReceivedRewards],
             row[Vote.Table.votedAt]
         )
+    }
+
+    suspend fun updateVote(discordId: String, vote: Vote): Deferred<Unit> {
+        return async {
+            Vote.Table.update({ Vote.Table.discordId eq discordId }) {
+                it[isReceivedRewards] = vote.isReceivedRewards
+            }
+        }
+    }
+
+    suspend fun updateVote(uuid: UUID): Deferred<Unit> {
+        return async {
+            Vote.Table.update({ Vote.Table.uuid eq uuid.toString() }) {
+                it[isReceivedRewards] = true
+            }
+        }
     }
 
     suspend fun <T> async(statement: suspend Transaction.() -> T): Deferred<T> {

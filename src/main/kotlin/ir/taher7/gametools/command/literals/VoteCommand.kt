@@ -9,7 +9,6 @@ import org.sayandev.stickynote.bukkit.command.BukkitSender
 import org.sayandev.stickynote.bukkit.command.player
 import org.sayandev.stickynote.bukkit.extension.sendComponent
 import org.sayandev.stickynote.bukkit.launch
-import org.sayandev.stickynote.bukkit.log
 
 class VoteCommand(
     command: MutableCommandBuilder<BukkitSender>
@@ -29,7 +28,6 @@ class VoteCommand(
                 return@launch
             }
 
-
             Socket.emit(
                 "requestVote",
                 mapOf(
@@ -38,7 +36,6 @@ class VoteCommand(
                     "username" to player.name
                 )
             )
-
         }
     }
 }

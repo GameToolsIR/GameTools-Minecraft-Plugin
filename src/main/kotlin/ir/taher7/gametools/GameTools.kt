@@ -5,6 +5,7 @@ import ir.taher7.gametools.database.Database
 import ir.taher7.gametools.config.databaseConfig
 import ir.taher7.gametools.config.messageConfig
 import ir.taher7.gametools.config.settingConfig
+import ir.taher7.gametools.listeners.GameToolsListener
 import ir.taher7.gametools.websocket.Socket
 import org.bukkit.plugin.java.JavaPlugin
 import org.sayandev.stickynote.bukkit.hook.PlaceholderAPIHook
@@ -23,6 +24,9 @@ class GameTools : JavaPlugin() {
         Database
         Socket
         CommandManager()
+
+
+        server.pluginManager.registerEvents(GameToolsListener(), this)
     }
 
     override fun onDisable() {
