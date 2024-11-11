@@ -5,6 +5,7 @@ import com.google.gson.annotations.Expose
 data class RequestVote(
     @Expose val url: String,
     @Expose val uuid: String,
+    @Expose val serverName: String,
 ) {}
 
 data class NewVote(
@@ -12,7 +13,8 @@ data class NewVote(
     @Expose val discordId: String,
     @Expose val discordDisplayName: String,
     @Expose val serverVotes: Int,
-    @Expose val serverVoteRank: Int
+    @Expose val serverVoteRank: Int,
+    @Expose val serverName: String,
 ) {}
 
 data class VotePlayer(

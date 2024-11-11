@@ -19,7 +19,7 @@ class VoteCommand(
 
             val isVoted = Database.getVote(player.uniqueId).await()
             if (isVoted != null) {
-                player.sendComponent("<red>You have already voted! ${isVoted.uuid}")
+                player.sendComponent("<red>You have already voted!")
                 return@launch
             }
 

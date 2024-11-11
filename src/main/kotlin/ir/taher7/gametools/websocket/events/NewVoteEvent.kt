@@ -31,7 +31,7 @@ class NewVoteEvent(event: Socket.Event) : SocketEvent(event) {
                     uuid = newVote.player.uuid,
                     username = newVote.player.username,
                     discordId = newVote.discordId,
-                    isReceivedRewards = player === null,
+                    isReceivedRewards = player !== null,
                 )
 
                 Database.addVote(newVote).await()

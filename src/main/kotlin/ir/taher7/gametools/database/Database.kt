@@ -57,6 +57,7 @@ object Database {
                 result[uuid] = vote.uuid
                 result[username] = vote.username
                 result[discordId] = vote.discordId
+                result[isReceivedRewards] = vote.isReceivedRewards
             }
         }
     }

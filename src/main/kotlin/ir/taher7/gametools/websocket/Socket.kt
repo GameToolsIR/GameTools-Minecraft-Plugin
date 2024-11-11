@@ -16,6 +16,8 @@ object Socket {
         DISCONNECT(Socket.EVENT_DISCONNECT),
         REQUEST_VOTE("requestVote"),
         NEW_VOTE("newVote"),
+        NEW_BOOST("newBoost"),
+        NEW_COMMENT("newComment"),
     }
 
     private val url =
@@ -38,6 +40,8 @@ object Socket {
         socket.on(Event.DISCONNECT.value) { DisconnectEvent(Event.DISCONNECT).handler(it) }
         socket.on(Event.REQUEST_VOTE.value) { RequestVoteEvent(Event.REQUEST_VOTE).handler(it) }
         socket.on(Event.NEW_VOTE.value) { NewVoteEvent(Event.NEW_VOTE).handler(it) }
+        socket.on(Event.NEW_BOOST.value) { NewBoostEvent(Event.NEW_BOOST).handler(it) }
+        socket.on(Event.NEW_COMMENT.value) { NewCommentEvent(Event.NEW_COMMENT).handler(it) }
 
     }
 
