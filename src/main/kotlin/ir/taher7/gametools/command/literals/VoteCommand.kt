@@ -16,8 +16,11 @@ class VoteCommand(
     override fun handler(context: CommandContext<BukkitSender>) {
         launch {
             val player = context.player() ?: return@launch
+            val isVoted = Database.getUser(player.uniqueId).await()?.let {
+                Database.getVote(it.id, Database.HandleGetType.ID).await()
+            }
 
-            val isVoted = Database.getVote(player.uniqueId).await()
+
             if (isVoted != null) {
                 player.sendComponent("<red>You have already voted!")
                 return@launch
@@ -32,7 +35,7 @@ class VoteCommand(
                 "requestVote",
                 mapOf(
                     "uuid" to player.uniqueId.toString(),
-                    "ip" to  player.address.address.hostAddress,
+                    "ip" to player.address.address.hostAddress,
                     "username" to player.name
                 )
             )

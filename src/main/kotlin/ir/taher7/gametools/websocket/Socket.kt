@@ -47,7 +47,7 @@ object Socket {
 
 
     fun emit(event: String, data: Map<String, String>) {
-        if (!socket.isActive) return
+        if (!socket.connected()) return
         socket.emit(event, data)
     }
 
@@ -56,6 +56,6 @@ object Socket {
     }
 
     fun isActive(): Boolean {
-        return socket.isActive
+        return socket.connected()
     }
 }

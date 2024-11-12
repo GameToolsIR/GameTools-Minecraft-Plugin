@@ -12,4 +12,13 @@ object GameToolsManager {
         player.sendComponent("<yellow> reward #2")
         player.sendComponent("<yellow> reward #3")
     }
+
+    fun giveBoostRewards(player: Player, amount: Int) {
+        player.sendComponent("<yellow>Thank you for boosting the server and supporting us. <blue>Enjoy your rewards!")
+        player.giveExp(amount)
+        player.sendComponent("<green>+$amount <yellow>exp")
+        player.sendComponent("<yellow> reward #1")
+        player.sendComponent("<yellow> reward #2")
+        player.sendComponent("<yellow> reward #3")
+    }
 }

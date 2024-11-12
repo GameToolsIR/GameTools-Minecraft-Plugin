@@ -12,10 +12,22 @@ class GameToolsListener : Listener {
     fun onPlayerJoin(event: PlayerJoinEvent) {
         launch {
             val player = event.player
-            val existVote = Database.getVote(player.uniqueId).await() ?: return@launch
-            if (!existVote.isReceivedRewards) {
+            val toolsPlayer = Database.getUser(player.uniqueId).await() ?: return@launch
+
+            val existVote = Database.getVote(toolsPlayer.id, Database.HandleGetType.ID).await()
+            if (existVote !== null && !existVote.isReceivedRewards) {
                 GameToolsManager.giveVoteRewards(player)
-                Database.updateVote(player.uniqueId).await()
+                Database.updateVote(existVote.id, Database.HandleGetType.ID, true).await()
+            }
+
+            val existBoost = Database.getUserBoosts(toolsPlayer.id).await()
+            if (existBoost.isNotEmpty()) {
+                for (boost in existBoost) {
+                    if (!boost.isReceivedRewards) {
+                        GameToolsManager.giveBoostRewards(player, boost.amount)
+                        Database.updateBoost(boost.id, Database.HandleGetType.ID, true).await()
+                    }
+                }
             }
         }
     }

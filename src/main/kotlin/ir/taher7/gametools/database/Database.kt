@@ -4,6 +4,8 @@ import com.zaxxer.hikari.HikariConfig
 import com.zaxxer.hikari.HikariDataSource
 import ir.taher7.gametools.config.DatabaseStorage
 import ir.taher7.gametools.config.databaseConfig
+import ir.taher7.gametools.database.models.Boost
+import ir.taher7.gametools.database.models.User
 import ir.taher7.gametools.database.models.Vote
 import kotlinx.coroutines.Deferred
 import org.jetbrains.exposed.sql.*
@@ -47,79 +49,164 @@ object Database {
         TransactionManager.defaultDatabase = database
 
         transaction {
+            SchemaUtils.create(User.Table)
             SchemaUtils.create(Vote.Table)
+            SchemaUtils.create(Boost.Table)
         }
+    }
+
+    private fun createUser(row: ResultRow): User {
+        return User(
+            row[User.Table.id],
+            row[User.Table.uuid],
+            row[User.Table.username],
+            row[User.Table.discordId],
+            row[User.Table.createdAt]
+        )
+    }
+
+    suspend fun addUser(uuid: String, username: String, discordId: String): Deferred<User> {
+        return async {
+            val user = User.Table.insert { result ->
+                result[User.Table.uuid] = uuid
+                result[User.Table.username] = username
+                result[User.Table.discordId] = discordId
+            }
+            User(
+                user[User.Table.id],
+                user[User.Table.uuid],
+                user[User.Table.username],
+                user[User.Table.discordId],
+            )
+        }
+    }
+
+    suspend fun getUser(uuid: UUID): Deferred<User?> {
+        return async {
+            User.Table.selectAll().where { User.Table.uuid eq uuid.toString() }.firstOrNull()?.let { createUser(it) }
+        }
+    }
+
+    suspend fun getUser(discordId: String): Deferred<User?> {
+        return async {
+            User.Table.selectAll().where { User.Table.discordId eq discordId }.firstOrNull()?.let { createUser(it) }
+        }
+    }
+
+
+    private fun createVote(row: ResultRow): Vote {
+        return Vote(
+            row[Vote.Table.id],
+            row[Vote.Table.userId],
+            row[Vote.Table.isReceivedRewards],
+        )
     }
 
     suspend fun addVote(vote: Vote): Deferred<Unit> {
         return async {
             Vote.Table.insert { result ->
-                result[uuid] = vote.uuid
-                result[username] = vote.username
-                result[discordId] = vote.discordId
-                result[isReceivedRewards] = vote.isReceivedRewards
+                result[Vote.Table.userId] = vote.userId
+                result[Vote.Table.isReceivedRewards] = vote.isReceivedRewards
             }
         }
     }
 
-    suspend fun getVote(uniqueId: UUID): Deferred<Vote?> {
+    suspend fun getVote(id: Int, type: HandleGetType): Deferred<Vote?> {
         return async {
-            Vote.Table
-                .selectAll()
-                .where { Vote.Table.uuid eq uniqueId.toString() }
-                .firstOrNull()
-                ?.let {
-                    createVote(it)
+            when (type) {
+                HandleGetType.ID -> Vote.Table.selectAll().where { Vote.Table.id eq id }.firstOrNull()
+                    ?.let { createVote(it) }
+
+                HandleGetType.USER_ID -> Vote.Table.selectAll().where { Vote.Table.userId eq id }.firstOrNull()
+                    ?.let { createVote(it) }
+            }
+        }
+    }
+
+    suspend fun updateVote(id: Int, type: HandleGetType, isReceivedRewards: Boolean): Deferred<Unit> {
+        return async {
+            when (type) {
+                HandleGetType.ID -> Vote.Table.update({ Vote.Table.id eq id }) {
+                    it[Vote.Table.isReceivedRewards] = isReceivedRewards
                 }
-        }
-    }
 
-    suspend fun getVote(discordId: String): Deferred<Vote?> {
-        return async {
-            Vote.Table.selectAll().where { Vote.Table.discordId eq discordId }.firstOrNull()?.let {
-                createVote(it)
+                HandleGetType.USER_ID -> Vote.Table.update({ Vote.Table.userId eq id }) {
+                    it[Vote.Table.isReceivedRewards] = isReceivedRewards
+                }
             }
         }
     }
 
-    suspend fun deleteVote(uniqueId: UUID): Deferred<Unit> {
+    suspend fun deleteVote(id: Int, type: HandleGetType): Deferred<Unit> {
         return async {
-            Vote.Table.deleteWhere { uuid eq uniqueId.toString() }
+            when (type) {
+                HandleGetType.ID -> Vote.Table.deleteWhere { Vote.Table.id eq id }
+                HandleGetType.USER_ID -> Vote.Table.deleteWhere { Vote.Table.userId eq id }
+            }
         }
     }
 
-    suspend fun deleteVote(discordId: String): Deferred<Unit> {
-        return async {
-            Vote.Table.deleteWhere { Vote.Table.discordId eq discordId }
-        }
-    }
-
-    private fun createVote(row: ResultRow): Vote {
-        return Vote(
-            row[Vote.Table.id],
-            row[Vote.Table.uuid],
-            row[Vote.Table.username],
-            row[Vote.Table.discordId],
-            row[Vote.Table.isReceivedRewards],
-            row[Vote.Table.votedAt]
+    private fun createBoost(row: ResultRow): Boost {
+        return Boost(
+            row[Boost.Table.id],
+            row[Boost.Table.userId],
+            row[Boost.Table.amount],
+            row[Boost.Table.isReceivedRewards],
+            row[Boost.Table.boostedAt]
         )
     }
 
-    suspend fun updateVote(discordId: String, vote: Vote): Deferred<Unit> {
+    suspend fun addBoost(userId: Int, amount: Int, isReceivedRewards: Boolean): Deferred<Unit> {
         return async {
-            Vote.Table.update({ Vote.Table.discordId eq discordId }) {
-                it[isReceivedRewards] = vote.isReceivedRewards
+            Boost.Table.insert { result ->
+                result[Boost.Table.userId] = userId
+                result[Boost.Table.amount] = amount
+                result[Boost.Table.isReceivedRewards] = isReceivedRewards
             }
         }
     }
 
-    suspend fun updateVote(uuid: UUID): Deferred<Unit> {
+    suspend fun getBoost(id: Int, type: HandleGetType): Deferred<Boost?> {
         return async {
-            Vote.Table.update({ Vote.Table.uuid eq uuid.toString() }) {
-                it[isReceivedRewards] = true
+            when (type) {
+                HandleGetType.ID -> Boost.Table.selectAll().where { Boost.Table.id eq id }.firstOrNull()
+                    ?.let { createBoost(it) }
+
+                HandleGetType.USER_ID -> Boost.Table.selectAll().where { Boost.Table.userId eq id }.firstOrNull()
+                    ?.let { createBoost(it) }
             }
         }
     }
+
+    suspend fun getUserBoosts(userId: Int): Deferred<List<Boost>> {
+        return async {
+            Boost.Table.selectAll().where { Boost.Table.userId eq userId }.map { createBoost(it) }
+        }
+    }
+
+    suspend fun updateBoost(id: Int, type: HandleGetType, isReceivedRewards: Boolean): Deferred<Unit> {
+        return async {
+            when (type) {
+                HandleGetType.ID -> Boost.Table.update({ Boost.Table.id eq id }) {
+                    it[Boost.Table.isReceivedRewards] = isReceivedRewards
+                }
+
+                HandleGetType.USER_ID -> Boost.Table.update({ Boost.Table.userId eq id }) {
+                    it[Boost.Table.isReceivedRewards] = isReceivedRewards
+                }
+            }
+        }
+    }
+
+    suspend fun deleteBoost(id: Int, type: HandleGetType): Deferred<Unit> {
+        return async {
+            when (type) {
+                HandleGetType.ID -> Boost.Table.deleteWhere { Boost.Table.id eq id }
+                HandleGetType.USER_ID -> Boost.Table.deleteWhere { Boost.Table.userId eq id }
+            }
+        }
+    }
+
 
     suspend fun <T> async(statement: suspend Transaction.() -> T): Deferred<T> {
         return suspendedTransactionAsync(
@@ -128,5 +215,11 @@ object Database {
             statement = statement
         )
     }
+
+    enum class HandleGetType {
+        ID,
+        USER_ID
+    }
+
 
 }

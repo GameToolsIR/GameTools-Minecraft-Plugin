@@ -6,23 +6,21 @@ import org.jetbrains.exposed.sql.kotlin.datetime.CurrentTimestamp
 import org.jetbrains.exposed.sql.kotlin.datetime.timestamp
 import org.sayandev.stickynote.bukkit.plugin
 
-
-data class Vote(
+data class Boost(
     val id: Int = 0,
     val userId: Int = 0,
+    val amount: Int = 0,
     val isReceivedRewards: Boolean = false,
-    val votedAt: Instant = Clock.System.now(),
+    val createdAt: Instant = Clock.System.now(),
 ) {
 
-    object Table : org.jetbrains.exposed.sql.Table("${plugin.name.lowercase()}_votes") {
+    object Table : org.jetbrains.exposed.sql.Table("${plugin.name.lowercase()}_boosts") {
         val id = integer("id").autoIncrement()
+        val userId = integer("userId").references(User.Table.id)
+        val amount = integer("amount")
         val isReceivedRewards = bool("isReceivedRewards")
-        val votedAt = timestamp("votedAt").defaultExpression(CurrentTimestamp)
-        val userId = integer("userId").references(User.Table.id).uniqueIndex()
+        val boostedAt = timestamp("boostedAt").defaultExpression(CurrentTimestamp)
 
         override val primaryKey = PrimaryKey(id)
-
     }
-
-
 }
