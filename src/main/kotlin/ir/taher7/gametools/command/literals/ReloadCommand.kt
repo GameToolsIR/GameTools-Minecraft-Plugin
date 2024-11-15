@@ -1,6 +1,8 @@
 package ir.taher7.gametools.command.literals
 
 import ir.taher7.gametools.command.Literal
+import ir.taher7.gametools.config.MessageConfig
+import ir.taher7.gametools.config.SettingConfig
 import ir.taher7.gametools.config.messageConfig
 import ir.taher7.gametools.config.settingConfig
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder
@@ -15,8 +17,8 @@ class ReloadCommand(
 
     override fun handler(context: CommandContext<BukkitSender>) {
 
-        settingConfig.reload()
-        messageConfig.reload()
+        SettingConfig.reload()
+        MessageConfig.reload()
 
         context.sender().platformSender().sendComponent(
             messageConfig.general.reload,

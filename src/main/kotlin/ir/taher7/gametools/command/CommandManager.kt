@@ -1,6 +1,7 @@
 package ir.taher7.gametools.command
 
 import ir.taher7.gametools.command.literals.ReloadCommand
+import ir.taher7.gametools.command.literals.RewardCommand
 import ir.taher7.gametools.command.literals.VoteCommand
 import org.incendo.cloud.context.CommandContext
 import org.sayandev.stickynote.bukkit.command.BukkitCommand
@@ -19,6 +20,7 @@ class CommandManager : BukkitCommand(
         registerHelpLiteral()
         VoteCommand(rawCommandBuilder())
         ReloadCommand(rawCommandBuilder())
+        RewardCommand(rawCommandBuilder(), help)
     }
 
 }

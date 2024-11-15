@@ -6,14 +6,16 @@ import org.sayandev.stickynote.bukkit.command.BukkitSender
 import org.sayandev.stickynote.bukkit.command.literalWithPermission
 
 abstract class Literal(
-    commandBuilder: MutableCommandBuilder<BukkitSender>,
-    name: String
+    parentCommandBuilder: MutableCommandBuilder<BukkitSender>,
+    name: String,
 ) {
 
+    val commandBuilder: MutableCommandBuilder<BukkitSender>
+
     init {
-        commandBuilder.registerCopy {
+        commandBuilder = parentCommandBuilder.registerCopy {
             literalWithPermission(name)
-            builder(commandBuilder)
+            builder(parentCommandBuilder)
             handler { context -> handler(context) }
         }
     }

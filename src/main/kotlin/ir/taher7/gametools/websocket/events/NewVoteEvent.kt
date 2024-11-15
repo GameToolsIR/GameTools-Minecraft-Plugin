@@ -1,5 +1,6 @@
 package ir.taher7.gametools.websocket.events
 
+import ir.taher7.gametools.config.messageConfig
 import ir.taher7.gametools.core.GameToolsManager
 import ir.taher7.gametools.database.Database
 import ir.taher7.gametools.database.models.Vote
@@ -9,6 +10,7 @@ import ir.taher7.gametools.utils.Utils
 import ir.taher7.gametools.websocket.Socket
 import ir.taher7.gametools.websocket.SocketEvent
 import ir.taher7.gametools.websocket.models.NewVote
+import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder
 import org.bukkit.Bukkit
 import org.sayandev.stickynote.bukkit.extension.sendComponent
 import org.sayandev.stickynote.bukkit.launch
@@ -22,17 +24,20 @@ class NewVoteEvent(event: Socket.Event) : SocketEvent(event) {
 
             val isVoted = player?.uniqueId?.let { uuid ->
                 Database.getUser(uuid).await()?.id?.let { id ->
-                    Database.getVote(id, Database.HandleGetType.ID).await()
+                    Database.getVote(
+                        id,
+                        Database.HandleGetType.USER_ID
+                    ).await()
                 }
             }
 
             if (isVoted != null) {
-                player.sendComponent("You have already voted! and received rewards.")
+                player.sendComponent(messageConfig.vote.alreadyVoted)
                 return@launch
             }
 
             if (newVote.player !== null) {
-                val user = Database.getUser(newVote.player.uuid).await() ?: Database.addUser(
+                val user = Database.getUser(newVote.discordId).await() ?: Database.addUser(
                     newVote.player.uuid,
                     newVote.player.username,
                     newVote.discordId
@@ -42,8 +47,14 @@ class NewVoteEvent(event: Socket.Event) : SocketEvent(event) {
                 player?.let { GameToolsManager.giveVoteRewards(it) }
             }
 
-            Utils.announce("<yellow>A new vote has been received from <green>${newVote.discordDisplayName} ${if (newVote.player !== null) "<blue>${newVote.player.username}" else ""}<yellow>.")
-
+            Utils.announce(
+                messageConfig.vote.broadcastNewVote,
+                Placeholder.parsed("player", player?.name ?: newVote.player?.username ?: newVote.discordDisplayName),
+                Placeholder.parsed("server", newVote.serverName),
+                Placeholder.parsed("server_rank", newVote.serverVoteRank.toString()),
+                Placeholder.parsed("server_votes", newVote.serverVotes.toString()),
+                Placeholder.parsed("url", "https://game-tools.ir/mc/servers/${newVote.serverName.lowercase()}"),
+            )
         }
     }
 }

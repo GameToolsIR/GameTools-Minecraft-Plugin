@@ -10,4 +10,12 @@ object Utils {
             player.sendComponent(message, *placeholder)
         }
     }
+
+    fun announce(message: List<String>, vararg placeholder: TagResolver) {
+        for (player in Bukkit.getOnlinePlayers()) {
+            for (msg in message) {
+                player.sendComponent(msg, *placeholder)
+            }
+        }
+    }
 }

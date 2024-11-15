@@ -1,24 +1,47 @@
 package ir.taher7.gametools.core
 
+import ir.taher7.gametools.config.messageConfig
+import ir.taher7.gametools.config.settingConfig
+import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder
+import org.bukkit.Bukkit
 import org.bukkit.entity.Player
 import org.sayandev.stickynote.bukkit.extension.sendComponent
+import org.sayandev.stickynote.bukkit.log
 
 object GameToolsManager {
     fun giveVoteRewards(player: Player) {
-        player.sendComponent("<yellow>Thank you for voting for the server and supporting us. <blue>Enjoy your rewards!")
-        player.giveExp(1000)
-        player.sendComponent("<green>+1000 <yellow>exp")
-        player.sendComponent("<yellow> reward #1")
-        player.sendComponent("<yellow> reward #2")
-        player.sendComponent("<yellow> reward #3")
+        player.sendComponent(
+            messageConfig.vote.newVote,
+            Placeholder.parsed("player", player.name)
+        )
+
+        for (reward in settingConfig.vote.rewards) {
+            log(reward.command)
+            Bukkit.dispatchCommand(Bukkit.getConsoleSender(), reward.command.replace("<player>", player.name))
+            reward.message?.let { player.sendComponent(it) }
+        }
     }
 
     fun giveBoostRewards(player: Player, amount: Int) {
-        player.sendComponent("<yellow>Thank you for boosting the server and supporting us. <blue>Enjoy your rewards!")
-        player.giveExp(amount)
-        player.sendComponent("<green>+$amount <yellow>exp")
-        player.sendComponent("<yellow> reward #1")
-        player.sendComponent("<yellow> reward #2")
-        player.sendComponent("<yellow> reward #3")
+        player.sendComponent(
+            messageConfig.boost.newBoost,
+            Placeholder.parsed("amount", amount.toString()),
+            Placeholder.parsed("player", player.name),
+        )
+        for (reward in settingConfig.boost.rewards) {
+            Bukkit.dispatchCommand(
+                Bukkit.getConsoleSender(),
+                reward.command
+                    .replace("<player>", player.name)
+                    .replace("<amount>", amount.toString())
+            )
+            reward.message?.let {
+                player.sendComponent(
+                    it,
+                    Placeholder.parsed("amount", amount.toString()),
+                    Placeholder.parsed("player", player.name),
+                )
+            }
+        }
     }
 }
