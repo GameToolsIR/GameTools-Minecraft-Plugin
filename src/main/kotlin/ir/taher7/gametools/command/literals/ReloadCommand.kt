@@ -5,6 +5,7 @@ import ir.taher7.gametools.config.MessageConfig
 import ir.taher7.gametools.config.SettingConfig
 import ir.taher7.gametools.config.messageConfig
 import ir.taher7.gametools.config.settingConfig
+import ir.taher7.gametools.schedulers.AutoAnnounce
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder
 import org.incendo.cloud.context.CommandContext
 import org.incendo.cloud.kotlin.MutableCommandBuilder
@@ -19,7 +20,7 @@ class ReloadCommand(
 
         SettingConfig.reload()
         MessageConfig.reload()
-
+        AutoAnnounce.restart()
         context.sender().platformSender().sendComponent(
             messageConfig.general.reload,
             Placeholder.parsed("player", context.sender().platformSender().name)

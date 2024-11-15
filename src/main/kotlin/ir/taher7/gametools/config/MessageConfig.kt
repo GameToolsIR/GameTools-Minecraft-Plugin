@@ -40,7 +40,7 @@ data class MessageConfig(
     data class Vote(
         val vote: String = "<click:open_url:'<url>'><prefix>Click here to vote for <highlight_color><server></click>",
         val alreadyVoted: String = "<prefix><red>You have already voted! and received rewards.",
-        val newVote: String = "<prefix><text_color>Thank you for voting and supporting us. <highlight_color>Enjoy your rewards!",
+        val newVote: String = "<prefix><text_color>Thank you for voting and supporting us.",
         val broadcastNewVote: List<String> = listOf(
             "",
             "",
@@ -51,6 +51,14 @@ data class MessageConfig(
             "",
             "",
         ),
+        val autoAnnounce: List<String> = listOf(
+            "",
+            "",
+            "<prefix>Vote for <highlight_color><server> <text_color>and get rewards!",
+            "<click:run_command:'/gametools vote'><prefix>Click here to vote for<highlight_color> <server> </click>",
+            "",
+            "",
+        )
     )
 
     @ConfigSerializable
@@ -66,6 +74,14 @@ data class MessageConfig(
             "",
             "",
         ),
+        val autoAnnounce: List<String> = listOf(
+            "",
+            "",
+            "<prefix>Boost <highlight_color><server> <text_color>and get rewards!",
+            "<click:open_url:'<url>'><prefix>Click here to boost <highlight_color><server> </click>",
+            "",
+            "",
+        )
     )
 
 

@@ -3,6 +3,7 @@ package ir.taher7.gametools.command.literals
 import ir.taher7.gametools.command.Literal
 import ir.taher7.gametools.config.messageConfig
 import ir.taher7.gametools.database.Database
+import ir.taher7.gametools.utils.Utils
 import ir.taher7.gametools.websocket.Socket
 import org.incendo.cloud.context.CommandContext
 import org.incendo.cloud.kotlin.MutableCommandBuilder
@@ -17,6 +18,7 @@ class VoteCommand(
     override fun handler(context: CommandContext<BukkitSender>) {
         launch {
             val player = context.player() ?: return@launch
+            if (Utils.checkCoolDown(player)) return@launch
 
             val isVoted = Database.getUser(player.uniqueId).await()?.let {
                 Database.getVote(it.id, Database.HandleGetType.USER_ID).await()
@@ -41,6 +43,7 @@ class VoteCommand(
                     "username" to player.name
                 )
             )
+            Utils.resetPlayerCoolDown(player)
         }
     }
 }

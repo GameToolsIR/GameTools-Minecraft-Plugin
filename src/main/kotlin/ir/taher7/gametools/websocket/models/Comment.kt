@@ -8,5 +8,4 @@ data class NewComment(
     @Expose val content: String,
     @Expose val rating: Int,
     @Expose val serverRating: Float,
-    @Expose val serverName: String,
 ) {}

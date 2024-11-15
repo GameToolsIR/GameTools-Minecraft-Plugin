@@ -2,8 +2,8 @@ package ir.taher7.gametools.database
 
 import com.zaxxer.hikari.HikariConfig
 import com.zaxxer.hikari.HikariDataSource
-import ir.taher7.gametools.config.DatabaseStorage
-import ir.taher7.gametools.config.databaseConfig
+import ir.taher7.gametools.config.StorageConfig
+import ir.taher7.gametools.config.storageConfig
 import ir.taher7.gametools.database.models.Boost
 import ir.taher7.gametools.database.models.User
 import ir.taher7.gametools.database.models.Vote
@@ -22,28 +22,28 @@ import java.util.*
 object Database {
 
     private val databaseDispatcher = AsyncDispatcher(
-        "${plugin.name.lowercase()}-${databaseConfig.method}-thread",
-        databaseConfig.poolSize
+        "${plugin.name.lowercase()}-${storageConfig.database.method}-thread",
+        storageConfig.database.poolSize
     )
     private val database: Database
 
     init {
         val config = HikariConfig().apply {
-            jdbcUrl = when (databaseConfig.method) {
-                DatabaseStorage.DatabaseMethod.H2 -> "jdbc:h2:file:${pluginDirectory.absolutePath}/storage"
-                DatabaseStorage.DatabaseMethod.MYSQL,
-                DatabaseStorage.DatabaseMethod.MARIADB -> "jdbc:${databaseConfig.method.name.lowercase()}://${databaseConfig.host}:${databaseConfig.port}/${databaseConfig.database}"
+            jdbcUrl = when (storageConfig.database.method) {
+                StorageConfig.DatabaseMethod.H2 -> "jdbc:h2:file:${pluginDirectory.absolutePath}/storage"
+                StorageConfig.DatabaseMethod.MYSQL,
+                StorageConfig.DatabaseMethod.MARIADB -> "jdbc:${storageConfig.database.method.name.lowercase()}://${storageConfig.database.host}:${storageConfig.database.port}/${storageConfig.database.database}"
             }
 
-            driverClassName = when (databaseConfig.method) {
-                DatabaseStorage.DatabaseMethod.H2 -> "org.h2.Driver"
-                DatabaseStorage.DatabaseMethod.MYSQL -> "com.mysql.cj.jdbc.Driver"
-                DatabaseStorage.DatabaseMethod.MARIADB -> "org.mariadb.jdbc.Driver"
+            driverClassName = when (storageConfig.database.method) {
+                StorageConfig.DatabaseMethod.H2 -> "org.h2.Driver"
+                StorageConfig.DatabaseMethod.MYSQL -> "com.mysql.cj.jdbc.Driver"
+                StorageConfig.DatabaseMethod.MARIADB -> "org.mariadb.jdbc.Driver"
             }
 
-            username = databaseConfig.username
-            password = databaseConfig.password
-            maximumPoolSize = databaseConfig.poolSize
+            username = storageConfig.database.username
+            password = storageConfig.database.password
+            maximumPoolSize = storageConfig.database.poolSize
         }
         database = Database.connect(HikariDataSource(config))
         TransactionManager.defaultDatabase = database

@@ -2,9 +2,11 @@ package ir.taher7.gametools.listeners
 
 import ir.taher7.gametools.core.GameToolsManager
 import ir.taher7.gametools.database.Database
+import ir.taher7.gametools.utils.Utils
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
 import org.bukkit.event.player.PlayerJoinEvent
+import org.bukkit.event.player.PlayerQuitEvent
 import org.sayandev.stickynote.bukkit.launch
 
 class GameToolsListener : Listener {
@@ -30,5 +32,11 @@ class GameToolsListener : Listener {
                 }
             }
         }
+    }
+
+
+    @EventHandler
+    fun onPlayerQuit(event: PlayerQuitEvent) {
+        Utils.removePlayerCoolDown(event.player)
     }
 }

@@ -1,6 +1,7 @@
 package ir.taher7.gametools.websocket.events
 
 import ir.taher7.gametools.config.messageConfig
+import ir.taher7.gametools.core.GameToolsManager
 import ir.taher7.gametools.utils.GsonUtils
 import ir.taher7.gametools.utils.GsonUtils.fromJsonOrNull
 import ir.taher7.gametools.websocket.Socket
@@ -17,8 +18,8 @@ class RequestVoteEvent(event: Socket.Event) : SocketEvent(event) {
         val player = Bukkit.getPlayer(UUID.fromString(requestVote.uuid)) ?: return
         player.sendComponent(
             messageConfig.vote.vote,
-            Placeholder.parsed("url", requestVote.url),
-            Placeholder.parsed("server", requestVote.serverName),
+            Placeholder.parsed("url", "https://game-tools.ir/mc/servers/${GameToolsManager.serverData.name.lowercase()}?voteToken=${requestVote.token}"),
+            Placeholder.parsed("server", GameToolsManager.serverData.name),
         )
     }
 }

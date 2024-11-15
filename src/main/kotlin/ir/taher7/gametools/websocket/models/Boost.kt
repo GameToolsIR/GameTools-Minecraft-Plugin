@@ -8,5 +8,4 @@ data class NewBoost(
     @Expose val amount: Int,
     @Expose val serverBoosts: Int,
     @Expose val serverBoostRank: Int,
-    @Expose val serverName: String,
 ) {}

@@ -8,6 +8,7 @@ import org.incendo.cloud.context.CommandContext
 import org.incendo.cloud.description.CommandDescription
 import org.incendo.cloud.kotlin.MutableCommandBuilder
 import org.incendo.cloud.minecraft.extras.MinecraftHelp
+import org.incendo.cloud.parser.standard.IntegerParser
 import org.sayandev.stickynote.bukkit.command.BukkitSender
 import org.sayandev.stickynote.bukkit.command.literalWithPermission
 import org.sayandev.stickynote.bukkit.command.platformSender
@@ -32,10 +33,12 @@ class RewardCommand(
         commandBuilder.registerCopy {
             literalWithPermission("boost")
             required("player", PlayerParser.playerParser())
+            required("amount", IntegerParser.integerParser())
             commandDescription(CommandDescription.commandDescription("Give boost rewards to a player"))
             handler { context ->
                 val targetPlayer = context.get<Player>("player")
-                GameToolsManager.giveBoostRewards(targetPlayer, 3)
+                val amount = context.get<Int>("amount")
+                GameToolsManager.giveBoostRewards(targetPlayer, amount)
                 context.platformSender().sendComponent("You have given boost rewards to ${targetPlayer.name}")
             }
         }
