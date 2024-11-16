@@ -2,6 +2,7 @@ package ir.taher7.gametools.command.literals
 
 import ir.taher7.gametools.command.Literal
 import ir.taher7.gametools.config.messageConfig
+import ir.taher7.gametools.core.GameToolsManager
 import ir.taher7.gametools.database.Database
 import ir.taher7.gametools.utils.Utils
 import ir.taher7.gametools.websocket.Socket
@@ -35,14 +36,7 @@ class VoteCommand(
                 return@launch
             }
 
-            Socket.emit(
-                "requestVote",
-                mapOf(
-                    "uuid" to player.uniqueId.toString(),
-                    "ip" to player.address.address.hostAddress,
-                    "username" to player.name
-                )
-            )
+            GameToolsManager.sendVoteRequest(player)
             Utils.resetPlayerCoolDown(player)
         }
     }

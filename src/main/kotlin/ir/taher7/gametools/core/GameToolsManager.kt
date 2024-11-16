@@ -2,6 +2,7 @@ package ir.taher7.gametools.core
 
 import ir.taher7.gametools.config.messageConfig
 import ir.taher7.gametools.config.settingConfig
+import ir.taher7.gametools.websocket.Socket
 import ir.taher7.gametools.websocket.models.ServerData
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder
 import org.bukkit.Bukkit
@@ -14,7 +15,6 @@ object GameToolsManager {
         address = "",
         color = "#ffffff",
     )
-
 
     fun giveVoteRewards(player: Player) {
         player.sendComponent(
@@ -51,5 +51,16 @@ object GameToolsManager {
                 )
             }
         }
+    }
+
+    fun sendVoteRequest(player: Player) {
+        Socket.emit(
+            "requestVote",
+            mapOf(
+                "uuid" to player.uniqueId.toString(),
+                "ip" to player.address.address.hostAddress,
+                "username" to player.name
+            )
+        )
     }
 }
