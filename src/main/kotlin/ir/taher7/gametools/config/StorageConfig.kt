@@ -20,14 +20,14 @@ data class StorageConfig(
     }
 
     enum class DatabaseMethod {
-        H2,
+        SQLITE,
         MYSQL,
         MARIADB
     }
 
     @ConfigSerializable
     data class Database(
-        val method: DatabaseMethod = DatabaseMethod.H2,
+        val method: DatabaseMethod = DatabaseMethod.SQLITE,
         val host: String = "localhost",
         val port: Int = 3306,
         val username: String = "root",

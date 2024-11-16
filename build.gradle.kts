@@ -1,7 +1,9 @@
+import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
 import org.sayandev.plugin.StickyNoteModules
 
 plugins {
     `java-library`
+    `maven-publish`
     kotlin("jvm") version "2.0.20"
     id("xyz.jpenilla.run-paper") version "2.3.1"
     id("net.minecrell.plugin-yml.bukkit") version "0.6.0"
@@ -23,8 +25,8 @@ repositories {
 }
 
 dependencies {
-    implementation("com.h2database:h2:2.2.224")
-    implementation("org.mariadb.jdbc:mariadb-java-client:3.3.3")
+//    implementation("com.h2database:h2:2.2.224")
+//    stickynote.implementation("org.mariadb.jdbc:mariadb-java-client:3.3.3")
 
     paperweight.paperDevBundle("1.20.6-R0.1-SNAPSHOT")
 
@@ -32,29 +34,20 @@ dependencies {
     compileOnly("me.clip:placeholderapi:2.11.6")
 
 
-    implementation("io.socket:socket.io-client:2.1.1")
-//    implementation("org.jetbrains.exposed:exposed-kotlin-datetime:0.56.0")
+    stickynote.implementation("io.socket:socket.io-client:2.1.1")
 }
 
 stickynote {
     modules(StickyNoteModules.BUKKIT)
 }
 
-val relocations = mapOf(
-    "io.socket" to "ir.taher7.gametools.lib.socket",
-//    "org.jetbrains.exposed" to "ir.taher7.gametools.lib.exposed"
-)
 
 tasks {
-
-    shadowJar {
-//        exclude("META-INF/**")
+    withType<ShadowJar> {
+        archiveClassifier.set(null as? String)
         archiveFileName.set("${project.name}-${version}.jar")
-        relocations.forEach { (from, to) ->
-            relocate(from, to)
-        }
+        destinationDirectory.set(file(rootProject.projectDir.path + "/bin"))
         from("LICENSE")
-        //minimize()
     }
 
     runServer {
@@ -76,10 +69,46 @@ tasks {
     build {
         dependsOn(shadowJar)
     }
+
+    configurations {
+        create("compileOnlyApiResolved") {
+            isCanBeResolved = true
+            extendsFrom(configurations.getByName("compileOnlyApi"))
+        }
+    }
+
+    val publicationShadowJar by registering(com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar::class) {
+        from(sourceSets.main.get().output)
+        configurations = listOf(*configurations.toTypedArray(), project.configurations["compileOnlyApiResolved"])
+        archiveClassifier.set("")
+    }
+
+    publishing {
+        publications {
+            create<MavenPublication>("maven") {
+                artifact(publicationShadowJar.get())
+//                artifact(tasks["sourcesJar"])
+                this.version = project.version as String
+            }
+        }
+
+        repositories {
+            maven {
+                name = "sayandevelopment-repo"
+                url = uri("https://repo.sayandev.org/snapshots/")
+
+                credentials {
+                    username = System.getenv("REPO_SAYAN_USER") ?: project.findProperty("repo.sayan.user") as? String
+                    password = System.getenv("REPO_SAYAN_TOKEN") ?: project.findProperty("repo.sayan.token") as? String
+                }
+            }
+        }
+    }
 }
 
 java {
     disableAutoTargetJvm()
+    withSourcesJar()
     if (gradle.startParameter.getTaskNames().isNotEmpty() && gradle.startParameter.getTaskNames()
             .any { it.startsWith("runServer") }
     ) {

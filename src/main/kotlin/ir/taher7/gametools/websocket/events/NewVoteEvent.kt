@@ -16,55 +16,63 @@ import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder
 import org.bukkit.Bukkit
 import org.sayandev.stickynote.bukkit.extension.sendComponent
 import org.sayandev.stickynote.bukkit.launch
+import org.sayandev.stickynote.bukkit.runSync
 import java.util.*
 
 class NewVoteEvent(event: Socket.Event) : SocketEvent(event) {
     override fun handler(event: Array<Any>) {
-        launch {
-            if (!settingConfig.vote.enable) return@launch
-            val newVote = GsonUtils.gson.fromJsonOrNull(event[0].toString(), NewVote::class.java) ?: return@launch
-            val player = newVote.player?.uuid?.let { Bukkit.getPlayer(UUID.fromString(it)) }
-            val isVoted = player?.uniqueId?.let { uuid ->
-                Database.getUser(uuid).await()?.id?.let { id ->
-                    Database.getVote(id, Database.HandleGetType.USER_ID).await()
+        runSync {
+
+            launch {
+                if (!settingConfig.vote.enable) return@launch
+                val newVote = GsonUtils.gson.fromJsonOrNull(event[0].toString(), NewVote::class.java) ?: return@launch
+                val player = newVote.player?.uuid?.let { Bukkit.getPlayer(UUID.fromString(it)) }
+                val isVoted = player?.uniqueId?.let { uuid ->
+                    Database.getUser(uuid).await()?.id?.let { id ->
+                        Database.getVote(id, Database.HandleGetType.USER_ID).await()
+                    }
                 }
-            }
 
-            val newVoteEvent = NewVoteEvent(newVote, isVoted, player)
-            Bukkit.getPluginManager().callEvent(newVoteEvent)
-            if (newVoteEvent.isCancelled) return@launch
+                val newVoteEvent = NewVoteEvent(newVote, isVoted, player)
+                Bukkit.getPluginManager().callEvent(newVoteEvent)
+                if (newVoteEvent.isCancelled) return@launch
 
-            if (newVoteEvent.isVoted != null) {
-                newVoteEvent.player?.sendComponent(messageConfig.vote.alreadyVoted)
-                return@launch
-            }
-
-            if (newVoteEvent.vote.player !== null) {
-                val user = Database.getUser(newVoteEvent.vote.discordId).await() ?: Database.addUser(
-                    newVoteEvent.vote.player.uuid,
-                    newVoteEvent.vote.player.username,
-                    newVoteEvent.vote.discordId
-                ).await()
-
-                Database.addVote(Vote(userId = user.id, isReceivedRewards = newVoteEvent.player !== null)).await()
-                if (!(settingConfig.vote.getRewardJustInFirstTime && !newVoteEvent.vote.player.isFirstTime)) {
-                    newVoteEvent.player?.let { GameToolsManager.giveVoteRewards(it) }
+                if (newVoteEvent.isVoted != null) {
+                    newVoteEvent.player?.sendComponent(messageConfig.vote.alreadyVoted)
+                    return@launch
                 }
+
+                if (newVoteEvent.vote.player !== null) {
+                    val user = Database.getUser(newVoteEvent.vote.discordId).await() ?: Database.addUser(
+                        newVoteEvent.vote.player.uuid,
+                        newVoteEvent.vote.player.username,
+                        newVoteEvent.vote.discordId
+                    ).await()
+
+                    Database.addVote(Vote(userId = user.id, isReceivedRewards = newVoteEvent.player !== null)).await()
+                    if (!(settingConfig.vote.getRewardJustInFirstTime && !newVoteEvent.vote.player.isFirstTime)) {
+                        newVoteEvent.player?.let { GameToolsManager.giveVoteRewards(it) }
+                    }
+                }
+
+                if (!settingConfig.vote.broadcastMessage) return@launch
+                if (settingConfig.vote.onlyBroadcastExistPlayerMessage && newVoteEvent.vote.player === null) return@launch
+
+                Utils.announce(
+                    messageConfig.vote.broadcastNewVote,
+                    Placeholder.parsed(
+                        "player",
+                        newVoteEvent.player?.name ?: newVoteEvent.vote.player?.username
+                        ?: newVoteEvent.vote.discordDisplayName
+                    ),
+                    Placeholder.parsed("server_rank", newVoteEvent.vote.serverVoteRank.toString()),
+                    Placeholder.parsed("server_votes", newVoteEvent.vote.serverVotes.toString()),
+                    Placeholder.parsed(
+                        "url",
+                        "https://game-tools.ir/mc/servers/${GameToolsManager.serverData.name.lowercase()}"
+                    ),
+                )
             }
-
-            if (!settingConfig.vote.broadcastMessage) return@launch
-            if (settingConfig.vote.onlyBroadcastExistPlayerMessage && newVoteEvent.vote.player === null) return@launch
-
-            Utils.announce(
-                messageConfig.vote.broadcastNewVote,
-                Placeholder.parsed("player", newVoteEvent.player?.name ?: newVoteEvent.vote.player?.username ?: newVoteEvent.vote.discordDisplayName),
-                Placeholder.parsed("server_rank", newVoteEvent.vote.serverVoteRank.toString()),
-                Placeholder.parsed("server_votes", newVoteEvent.vote.serverVotes.toString()),
-                Placeholder.parsed(
-                    "url",
-                    "https://game-tools.ir/mc/servers/${GameToolsManager.serverData.name.lowercase()}"
-                ),
-            )
         }
     }
 }

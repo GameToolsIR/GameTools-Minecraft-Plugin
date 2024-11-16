@@ -30,13 +30,13 @@ object Database {
     init {
         val config = HikariConfig().apply {
             jdbcUrl = when (storageConfig.database.method) {
-                StorageConfig.DatabaseMethod.H2 -> "jdbc:h2:file:${pluginDirectory.absolutePath}/storage"
+                StorageConfig.DatabaseMethod.SQLITE -> "jdbc:sqlite:file:${pluginDirectory.absolutePath}/storage"
                 StorageConfig.DatabaseMethod.MYSQL,
                 StorageConfig.DatabaseMethod.MARIADB -> "jdbc:${storageConfig.database.method.name.lowercase()}://${storageConfig.database.host}:${storageConfig.database.port}/${storageConfig.database.database}"
             }
 
             driverClassName = when (storageConfig.database.method) {
-                StorageConfig.DatabaseMethod.H2 -> "org.h2.Driver"
+                StorageConfig.DatabaseMethod.SQLITE -> "org.sqlite.JDBC"
                 StorageConfig.DatabaseMethod.MYSQL -> "com.mysql.cj.jdbc.Driver"
                 StorageConfig.DatabaseMethod.MARIADB -> "org.mariadb.jdbc.Driver"
             }

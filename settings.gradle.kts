@@ -7,7 +7,7 @@ pluginManagement {
 }
 
 plugins {
-    id("org.sayandev.stickynote.settings") version "1.7.100"
+    id("org.sayandev.stickynote.settings") version "1.7.113"
 }
 
 rootProject.name = "GameTools"
