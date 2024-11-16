@@ -23,9 +23,7 @@ object Socket {
 
     private val url =
         URI.create("ws${if (storageConfig.websocket.useSSL) "s" else ""}://${storageConfig.websocket.host}:${storageConfig.websocket.port}/ws/server")
-    private val auth = mapOf(
-        "token" to storageConfig.websocket.token,
-    )
+    private val auth = mapOf("token" to storageConfig.websocket.token)
     private val options = IO.Options.builder()
         .setAuth(auth)
         .setTransports(arrayOf("websocket"))

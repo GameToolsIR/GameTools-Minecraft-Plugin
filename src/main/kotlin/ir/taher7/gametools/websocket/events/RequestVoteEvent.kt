@@ -19,7 +19,6 @@ class RequestVoteEvent(event: Socket.Event) : SocketEvent(event) {
         player.sendComponent(
             messageConfig.vote.vote,
             Placeholder.parsed("url", "https://game-tools.ir/mc/servers/${GameToolsManager.serverData.name.lowercase()}?voteToken=${requestVote.token}"),
-            Placeholder.parsed("server", GameToolsManager.serverData.name),
         )
     }
 }

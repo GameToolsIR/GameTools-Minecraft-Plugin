@@ -28,7 +28,6 @@ object AutoAnnounce {
                 if (!Socket.isActive()) return
                 Utils.announce(
                     messageConfig.vote.autoAnnounce,
-                    Placeholder.parsed("server", GameToolsManager.serverData.name)
                 )
             }
         }.runTaskTimerAsynchronously(
@@ -46,7 +45,6 @@ object AutoAnnounce {
                 if (!Socket.isActive()) return
                 Utils.announce(
                     messageConfig.boost.autoAnnounce,
-                    Placeholder.parsed("server", GameToolsManager.serverData.name),
                     Placeholder.parsed(
                         "url",
                         "https://game-tools.ir/mc/servers/${GameToolsManager.serverData.name.lowercase()}"

@@ -26,10 +26,7 @@ class NewVoteEvent(event: Socket.Event) : SocketEvent(event) {
             val player = newVote.player?.uuid?.let { Bukkit.getPlayer(UUID.fromString(it)) }
             val isVoted = player?.uniqueId?.let { uuid ->
                 Database.getUser(uuid).await()?.id?.let { id ->
-                    Database.getVote(
-                        id,
-                        Database.HandleGetType.USER_ID
-                    ).await()
+                    Database.getVote(id, Database.HandleGetType.USER_ID).await()
                 }
             }
 
@@ -57,10 +54,12 @@ class NewVoteEvent(event: Socket.Event) : SocketEvent(event) {
             Utils.announce(
                 messageConfig.vote.broadcastNewVote,
                 Placeholder.parsed("player", player?.name ?: newVote.player?.username ?: newVote.discordDisplayName),
-                Placeholder.parsed("server", GameToolsManager.serverData.name),
                 Placeholder.parsed("server_rank", newVote.serverVoteRank.toString()),
                 Placeholder.parsed("server_votes", newVote.serverVotes.toString()),
-                Placeholder.parsed("url", "https://game-tools.ir/mc/servers/${GameToolsManager.serverData.name.lowercase()}"),
+                Placeholder.parsed(
+                    "url",
+                    "https://game-tools.ir/mc/servers/${GameToolsManager.serverData.name.lowercase()}"
+                ),
             )
         }
     }

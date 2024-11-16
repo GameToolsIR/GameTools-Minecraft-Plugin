@@ -19,12 +19,14 @@ object GameToolsManager {
     fun giveVoteRewards(player: Player) {
         player.sendComponent(
             messageConfig.vote.newVote,
-            Placeholder.parsed("player", player.name)
+            Placeholder.parsed("player", player.name),
         )
 
         for (reward in settingConfig.vote.rewards) {
             Bukkit.dispatchCommand(Bukkit.getConsoleSender(), reward.command.replace("<player>", player.name))
-            reward.message?.let { player.sendComponent(it) }
+            reward.message?.let {
+                player.sendComponent(it)
+            }
         }
     }
 
@@ -39,7 +41,7 @@ object GameToolsManager {
                 Bukkit.getConsoleSender(),
                 reward.command
                     .replace("<player>", player.name)
-                    .replace("<amount>", amount.toString())
+                    .replace("<amount>", amount.toString()),
             )
             reward.message?.let {
                 player.sendComponent(

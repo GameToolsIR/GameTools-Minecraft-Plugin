@@ -42,7 +42,6 @@ class NewBoostEvent(socket: Socket.Event) : SocketEvent(socket) {
                 messageConfig.boost.broadcastNewBoost,
                 Placeholder.parsed("player", toolsPlayer?.username ?: newBoost.discordDisplayName),
                 Placeholder.parsed("amount", newBoost.amount.toString()),
-                Placeholder.parsed("server", GameToolsManager.serverData.name),
                 Placeholder.parsed("server_rank", newBoost.serverBoostRank.toString()),
                 Placeholder.parsed("server_boosts", newBoost.serverBoosts.toString()),
                 Placeholder.parsed("url", "https://game-tools.ir/mc/servers/${GameToolsManager.serverData.name.lowercase()}"),

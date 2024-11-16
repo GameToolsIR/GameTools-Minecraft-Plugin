@@ -6,6 +6,7 @@ import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver
 import org.bukkit.Bukkit
 import org.bukkit.entity.Player
 import org.sayandev.stickynote.bukkit.extension.sendComponent
+import org.sayandev.stickynote.bukkit.utils.AdventureUtils
 import java.util.*
 
 object Utils {
@@ -43,5 +44,17 @@ object Utils {
                 player.sendComponent(msg, *placeholder)
             }
         }
+    }
+
+    fun initTagResolvers(vararg placeholder: TagResolver) {
+        AdventureUtils.setTagResolver(
+            Placeholder.parsed("prefix", messageConfig.general.prefix),
+            Placeholder.parsed("hover_color", messageConfig.general.hoverColor),
+            Placeholder.parsed("text_color", messageConfig.general.textColor),
+            Placeholder.parsed("highlight_color", messageConfig.general.highlightColor),
+            Placeholder.parsed("header", messageConfig.general.header),
+            Placeholder.parsed("footer", messageConfig.general.footer),
+            *placeholder,
+        )
     }
 }

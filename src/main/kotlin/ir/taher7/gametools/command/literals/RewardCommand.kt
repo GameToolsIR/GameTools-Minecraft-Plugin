@@ -1,7 +1,9 @@
 package ir.taher7.gametools.command.literals
 
 import ir.taher7.gametools.command.Literal
+import ir.taher7.gametools.config.messageConfig
 import ir.taher7.gametools.core.GameToolsManager
+import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder
 import org.bukkit.entity.Player
 import org.incendo.cloud.bukkit.parser.PlayerParser
 import org.incendo.cloud.context.CommandContext
@@ -27,6 +29,10 @@ class RewardCommand(
             handler { context ->
                 val targetPlayer = context.get<Player>("player")
                 GameToolsManager.giveVoteRewards(targetPlayer)
+                context.platformSender().sendComponent(
+                    messageConfig.vote.giveReward,
+                    Placeholder.parsed("player", targetPlayer.name)
+                )
             }
         }
 
@@ -34,12 +40,16 @@ class RewardCommand(
             literalWithPermission("boost")
             required("player", PlayerParser.playerParser())
             required("amount", IntegerParser.integerParser())
-            commandDescription(CommandDescription.commandDescription("Give boost rewards to a player"))
+            commandDescription(CommandDescription.commandDescription("Give boost rewards to player"))
             handler { context ->
                 val targetPlayer = context.get<Player>("player")
                 val amount = context.get<Int>("amount")
                 GameToolsManager.giveBoostRewards(targetPlayer, amount)
-                context.platformSender().sendComponent("You have given boost rewards to ${targetPlayer.name}")
+                context.platformSender().sendComponent(
+                    messageConfig.boost.giveReward,
+                    Placeholder.parsed("player", targetPlayer.name),
+                    Placeholder.parsed("amount", amount.toString())
+                )
             }
         }
 
