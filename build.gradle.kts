@@ -88,6 +88,7 @@ tasks {
             create<MavenPublication>("maven") {
                 artifact(publicationShadowJar.get())
 //                artifact(tasks["sourcesJar"])
+                this.artifactId = project.name.lowercase()
                 this.version = project.version as String
             }
         }
