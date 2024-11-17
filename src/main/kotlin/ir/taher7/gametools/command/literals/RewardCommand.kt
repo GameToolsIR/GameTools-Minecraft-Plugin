@@ -24,7 +24,7 @@ class RewardCommand(
     init {
 
         commandBuilder.registerCopy {
-            literalWithPermission("vote")
+            literal("vote")
             required("player", PlayerParser.playerParser())
             handler { context ->
                 val targetPlayer = context.get<Player>("player")
@@ -37,7 +37,7 @@ class RewardCommand(
         }
 
         commandBuilder.registerCopy {
-            literalWithPermission("boost")
+            literal("boost")
             required("player", PlayerParser.playerParser())
             required("amount", IntegerParser.integerParser())
             commandDescription(CommandDescription.commandDescription("Give boost rewards to player"))

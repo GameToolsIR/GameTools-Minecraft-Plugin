@@ -12,7 +12,7 @@ plugins {
 }
 
 group = "ir.taher7"
-version = "1.0-SNAPSHOT"
+version = "1.0.0-SNAPSHOT"
 description = ""
 
 repositories {
