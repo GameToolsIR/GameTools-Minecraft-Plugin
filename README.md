@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="https://media.game-tools.ir/app/gametools-plugin.png" alt="MelodyMine Logo">
+  <img src="https://i.ibb.co/C05zsqP/gametools-plugin.png" alt="MelodyMine Logo">
 </p>
 
 <p align="center">
