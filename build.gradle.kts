@@ -134,28 +134,28 @@ bukkit {
     )
 }
 
-//fun setPom(publication: MavenPublication) {
-//    publication.pom {
-//        name.set("melodymine")
-//        description.set(rootProject.description)
-//        url.set("https://github.com/vallerian/melodymine")
-//        licenses {
-//            license {
-//                name.set("Apache License 2.0")
-//                url.set("https://github.com/Vallerian/MelodyMine/blob/master/LICENSE")
-//            }
-//        }
-//        developers {
-//            developer {
-//                id.set("taher7")
-//                name.set("taher moradi")
-//                email.set("")
-//            }
-//        }
-//        scm {
-//            connection.set("scm:git:github.com/vallerian/melodymine.git")
-//            developerConnection.set("scm:git:ssh://github.com/valleryan/melodymine.git")
-//            url.set("https://github.com/vallerian/melodymine/tree/master")
-//        }
-//    }
-//}
+fun setPom(publication: MavenPublication) {
+    publication.pom {
+        name.set("melodymine")
+        description.set(rootProject.description)
+        url.set("https://github.com/GameToolsIR/Minecraft-Plugin")
+        licenses {
+            license {
+                name.set("Apache License 2.0")
+                url.set("https://github.com/GameToolsIR/Minecraft-Plugin/blob/master/LICENSE")
+            }
+        }
+        developers {
+            developer {
+                id.set("taher7")
+                name.set("taher moradi")
+                email.set("")
+            }
+        }
+        scm {
+            connection.set("scm:git:github.com/GameToolsIR/Minecraft-Plugin.git")
+            developerConnection.set("scm:git:ssh://github.com/GameToolsIR/Minecraft-Plugin.git")
+            url.set("https://github.com/GameToolsIR/Minecraft-Plugin/tree/master")
+        }
+    }
+}
