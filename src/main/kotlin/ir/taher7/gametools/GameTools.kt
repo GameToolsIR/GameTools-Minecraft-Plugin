@@ -10,7 +10,9 @@ import ir.taher7.gametools.schedulers.AutoAnnounce
 import ir.taher7.gametools.utils.Utils
 import ir.taher7.gametools.websocket.Socket
 import org.bukkit.plugin.java.JavaPlugin
+import org.sayandev.stickynote.bukkit.hasPlugin
 import org.sayandev.stickynote.bukkit.hook.PlaceholderAPIHook
+import org.sayandev.stickynote.bukkit.registerListener
 import org.sayandev.stickynote.loader.bukkit.StickyNoteBukkitLoader
 
 class GameTools : JavaPlugin() {
@@ -18,7 +20,11 @@ class GameTools : JavaPlugin() {
     override fun onEnable() {
         // Load StickyNote
         StickyNoteBukkitLoader(this)
-        PlaceholderAPIHook.injectComponent()
+
+        // Initialize PlaceholderAPI hook
+        if (hasPlugin("PlaceholderAPI")) {
+            PlaceholderAPIHook.injectComponent()
+        }
 
 
         // Set instance
@@ -45,7 +51,7 @@ class GameTools : JavaPlugin() {
 
 
         // Register listeners
-        server.pluginManager.registerEvents(GameToolsListener(), this)
+        registerListener(GameToolsListener())
 
 
         // Register tag resolver
